@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'images/bg_1.jpg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home' %}">Home</a></span>
+                    <span>Wishlist</span></p>
+                <h1 class="mb-0 bread">My Wishlist</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div class="cart-list">
+                    <table class="table">
+                        <thead class="thead-primary">
+                        <tr class="text-center">
+                            <th>&nbsp;</th>
+                            <th>Product Image</th>
+                            <th>Product Details</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for product in products %}
+                        <tr class="text-center">
+                            <td class="product-remove">
+                                <a href="#" class="remove-product"><span class="ion-ios-close"></span></a>
+                            </td>
+                            <td class="image-prod">
+                                <div class="img"
+                                     style="background-image:url('{% static product.images.photo.url %}');"></div>
+                            </td>
+                            <td class="product-name">
+                                <h3>{{ product.name }}</h3>
+                                <p>{{ product.description }}</p>
+                            </td>
+                            <td class="price">${{ product.price }}</td>
+                            <td class="quantity">
+                                <div class="input-group mb-3">
+                                    <input type="text" name="quantity" class="quantity form-control input-number"
+                                           value="1" min="1" max="100">
+                                </div>
+                            </td>
+                            <td class="total">${{ product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    // Обновление итоговой суммы
+    function updateTotal(row) {
+      var price = parseFloat(row.find('.price').text().replace('$', ''));
+      var quantity = parseInt(row.find('input.quantity').val());
+      var total = price * quantity;
+      row.find('.total').text('$' + total.toFixed(2));
+    }
+
+    // Увеличение количества
+    $('.quantity-right-plus').click(function (e) {
+      e.preventDefault();
+      var row = $(this).closest('tr');
+      var quantity = parseInt(row.find('input.quantity').val());
+      row.find('input.quantity').val(quantity + 1);
+      updateTotal(row);
+    });
+
+    // Уменьшение количества
+    $('.quantity-left-minus').click(function (e) {
+      e.preventDefault();
+      var row = $(this).closest('tr');
+      var quantity = parseInt(row.find('input.quantity').val());
+      if (quantity > 1) {
+        row.find('input.quantity').val(quantity - 1);
+        updateTotal(row);
+      }
+    });
+
+    // Удаление продукта
+    $('.remove-product').click(function (e) {
+      e.preventDefault();
+      $(this).closest('tr').remove();
+    });
+  });
+
+</script>
+{% endblock main %}
